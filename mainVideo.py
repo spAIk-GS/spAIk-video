@@ -8,9 +8,8 @@ from utils import refine
 import math
 from tqdm import tqdm
 
-def run(video_path, analysis_id):
+def run(video_path):
     cap = cv2.VideoCapture(video_path)
-    video_id = video_path.split("/")[-1].split(".")[0]
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
