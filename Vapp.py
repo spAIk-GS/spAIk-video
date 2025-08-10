@@ -141,6 +141,15 @@ def process_video(s3_url, analysis_id, presentation_id, callback_url):
             }
 
             set_status(analysis_id, "COMPLETED")
+            
+            # 분석, 반환 정상작동 하는지 확인
+            summary = final_payload.get("result", {}).get("content_summary")
+            if summary is not None:
+                print("\n[DEBUG] content_summary =======================")
+                print(summary)
+                print("==============================================\n")
+            else:
+                print("[DEBUG] content_summary 없음")
             notify_status(callback_url, final_payload)
 
         except Exception as e:
