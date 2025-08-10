@@ -141,7 +141,7 @@ def process_video(s3_url, analysis_id, presentation_id, callback_url):
             }
 
             set_status(analysis_id, "COMPLETED")
-            
+
             # 분석, 반환 정상작동 하는지 확인
             summary = final_payload.get("result", {}).get("content_summary")
             if summary is not None:
@@ -168,10 +168,13 @@ def analyze_video():
     data = request.get_json()
     presentation_id = data.get("presentationId")
     s3_url = data.get("s3Url")
-    callback_url = data.get("callbackUrl")
 
-    if not all([presentation_id, s3_url, callback_url]):
-        return jsonify({"error": "presentationId, s3Url, callbackUrl은 필수입니다."}), 400
+    # 클라이언트 IP 기반 콜백 URL 생성
+    client_ip = request.remote_addr
+    callback_url = f"http://{client_ip}:8080/analysis/callback/video"
+
+    if not all([presentation_id, s3_url]):
+        return jsonify({"error": "presentationId, s3Url은 필수입니다."}), 400
 
     analysis_id = f"video-analysis-uuid-{uuid.uuid4()}"
 
