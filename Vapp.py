@@ -7,7 +7,6 @@ import threading
 import time
 from tqdm import tqdm
 import tempfile
-from urllib.parse import urlparse
 
 
 app = Flask(__name__)
