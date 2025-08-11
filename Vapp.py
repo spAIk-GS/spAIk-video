@@ -105,10 +105,6 @@ def download_video(s3_url, output_path):
 def process_video(s3_url, analysis_id, presentation_id, callback_url):
     set_status(analysis_id, "IN_PROGRESS")
 
-    # s3_url에서 미리 video_id 추출 (다운로드 실패시에도 사용)
-    url_path = urlparse(s3_url).path
-    url_name = os.path.basename(url_path)
-    video_id_from_url = os.path.splitext(url_name)[0] if url_name else analysis_id
 
     with tempfile.TemporaryDirectory(prefix="dl_") as tmpdir:
         video_path = os.path.join(tmpdir, f"{analysis_id}.mp4")
@@ -118,7 +114,7 @@ def process_video(s3_url, analysis_id, presentation_id, callback_url):
             set_status(analysis_id, "FAILED")
             fail_payload = {
                 "analysisId": analysis_id,
-                "videoId": video_id_from_url,  # URL에서 추출한 id 사용
+                "videoId": presentation_id,
                 # result 없음
             }
             notify_status(callback_url, fail_payload)
@@ -130,13 +126,11 @@ def process_video(s3_url, analysis_id, presentation_id, callback_url):
             if not isinstance(result_data, dict):
                 raise ValueError("mainVideo.run 결과 형식이 dict가 아닙니다.")
 
-            # 파일 기준 video_id 재계산(확실히)
-            video_id = os.path.splitext(os.path.basename(video_path))[0]
 
             # 3) 완료 통지: 최종 payload 조립 (presentationId/status는 빼는 조건)
             final_payload = {
                 "analysisId": analysis_id,
-                "videoId": video_id,
+                "videoId": presentation_id,
                 "result": result_data
             }
 
