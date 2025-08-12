@@ -132,6 +132,7 @@ def process_video(s3_url, analysis_id, presentation_id, callback_url):
                 "videoId": presentation_id,
                 "result": result_data
             }
+            print(final_payload)
 
             set_status(analysis_id, "COMPLETED")
 
